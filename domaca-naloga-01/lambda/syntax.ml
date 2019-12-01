@@ -51,8 +51,9 @@ let rec subst sbst = function
   | Cons (g, r) -> Cons (subst sbst g, subst sbst r)
   | Fst e -> Fst (subst sbst e)
   | Snd e -> Snd (subst sbst e)
-  | Match (e1,e2,i1,i2,e) -> let sbst2 = List.remove_assoc i1 (List.remove_assoc i2 sbst)
-                             in Match (subst sbst e1, subst sbst e2, i1, i2, subst sbst2 e)
+  | Match (e1,e2,i1,i2,e) -> 
+      let sbst2 = List.remove_assoc i1 (List.remove_assoc i2 sbst)
+      in Match (subst sbst e1, subst sbst e2, i1, i2, subst sbst2 e)
 
 
 let rec string_of_exp3 = function

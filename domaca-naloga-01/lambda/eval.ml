@@ -1,6 +1,5 @@
 module S = Syntax
 
-
 let rec eval_exp = function
   | S.Var x -> failwith "Expected a closed term"
   | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ | S.Nil as e -> e
@@ -46,16 +45,12 @@ let rec eval_exp = function
   | S.Pair (e1, e2) -> S.Pair (eval_exp e1, eval_exp e2)
   | S.Cons (g,r) -> S.Cons (eval_exp g, eval_exp r)
   | S.Fst e ->
-      let v = eval_exp e
-      in
-      begin match v with
+      begin match eval_exp e with
       | S.Pair (v1, v2) -> v1
       | _ -> failwith "Pair expected2"
       end
   | S.Snd e ->
-      let v = eval_exp e
-      in
-      begin match v with
+      begin match eval_exp e with
       | S.Pair (v1, v2) -> v2
       | _ -> failwith "Pair expected1"
       end
@@ -72,13 +67,14 @@ and eval_int e =
   
 
 let rec is_value = function
-  | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ -> true
-  | S.Var _ | S.Plus _ | S.Minus _ | S.Times _ | S.Equal _ | S.Less _ | S.Greater _
-  | S.IfThenElse _ | S.Apply _ -> false
-  | S.Pair (v1, v2) -> (is_value v1) && (is_value v2)
+  | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ 
   | S.Nil -> true
-  | S.Cons (g, r) -> (is_value g) && (is_value r)
+  | S.Var _ | S.Plus _ | S.Minus _ | S.Times _ | S.Equal _ | S.Less _ | S.Greater _
+  | S.IfThenElse _ | S.Apply _
   | S.Fst _ | S.Snd _ | S.Match _ -> false
+  | S.Pair (v1, v2) -> (is_value v1 && is_value v2)
+  | S.Cons (g, r) -> (is_value g && is_value r)
+
 
 let rec step = function
   | S.Var _ | S.Int _ | S.Bool _ | S.Lambda _ | S.RecLambda _ -> failwith "Expected a non-terminal expression"
