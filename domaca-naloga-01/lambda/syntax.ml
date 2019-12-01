@@ -30,7 +30,8 @@ let rec subst sbst = function
       | None -> e
       | Some e' -> e'
       end
-  | Int _ | Bool _ as e -> e
+  | Int _ 
+  | Bool _ as e -> e
   | Plus (e1, e2) -> Plus (subst sbst e1, subst sbst e2)
   | Minus (e1, e2) -> Minus (subst sbst e1, subst sbst e2)
   | Times (e1, e2) -> Times (subst sbst e1, subst sbst e2)
@@ -45,6 +46,13 @@ let rec subst sbst = function
       let sbst' = List.remove_assoc f (List.remove_assoc x sbst) in
       RecLambda (f, x, subst sbst' e)
   | Apply (e1, e2) -> Apply (subst sbst e1, subst sbst e2)
+  | Pair (e1, e2) -> Pair (subst sbst e1, subst sbst e2)
+  | Nil -> Nil
+  | Cons (g, r) -> Cons (subst sbst g, subst sbst r)
+  | Fst e -> Fst (subst sbst e)
+  | Snd e -> Snd (subst sbst e)
+  | Match (e1,e2,i1,i2,e) -> let sbst2 = List.remove_assoc i1 (List.remove_assoc i2 sbst)
+                             in Match (subst sbst e1, subst sbst e2, i1, i2, subst sbst2 e)
 
 
 let rec string_of_exp3 = function
