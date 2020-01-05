@@ -1,1 +1,1 @@
-IF 3>5 THEN (FALSE::TRUE::[]) ELSE (FUN x -> (FST x) = (SND x))
+FUN f -> (FUN x -> (f (FST x) (SND x)))
